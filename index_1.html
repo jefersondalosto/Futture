@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futture System - Gerador de Orçamento Solar Profissional</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div>
+                    <h1>Futture System</h1>
+                    <p class="subtitle">Gerador de Orçamento Solar Profissional</p>
+                </div>
+                <button id="admin-btn" class="btn btn--secondary">🔧 Admin</button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs">
+            <button class="tab active" data-tab="base-calculo">Base de Cálculo</button>
+            <button class="tab" data-tab="dados-cliente">Dados do Cliente</button>
+            <button class="tab" data-tab="analise-financeira">Análise Financeira</button>
+            <button class="tab" data-tab="finalizar-orcamento">Finalizar Orçamento</button>
+        </nav>
+
+        <!-- Tab Content -->
+        <main class="tab-content">
+            <!-- Tab 1: Base de Cálculo -->
+            <div id="base-calculo" class="tab-panel active">
+                <div class="grid">
+                    <!-- Localização -->
+                    <div class="card">
+                        <h3>Localização</h3>
+                        <div class="form-group">
+                            <label class="form-label">Selecione a Cidade:</label>
+                            <select id="cidade" class="form-control">
+                                <option value="">Selecione uma cidade</option>
+                            </select>
+                        </div>
+                        <div id="irradiacao-info" class="info-box hidden">
+                            <p>Irradiação Solar Média: <span id="irradiacao-valor"></span> kWh/kWp/dia</p>
+                        </div>
+                    </div>
+
+                    <!-- Seleção de Painéis -->
+                    <div class="card">
+                        <h3>Seleção de Painéis Solares</h3>
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Painel:</label>
+                            <select id="tipo-painel" class="form-control">
+                                <option value="">Selecione o tipo</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Quantidade de Painéis:</label>
+                            <input type="number" id="quantidade-paineis" class="form-control" min="1" value="10">
+                        </div>
+                        <div class="system-info">
+                            <p>Potência do Sistema: <span id="potencia-sistema">0.00 kWp</span></p>
+                            <p>Geração Estimada: <span id="geracao-estimada">0 kWh/mês</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Tipo de Estrutura -->
+                    <div class="card">
+                        <h3>Tipo de Estrutura</h3>
+                        <div class="form-group">
+                            <label class="form-label">Estrutura:</label>
+                            <select id="tipo-estrutura" class="form-control">
+                                <option value="">Selecione a estrutura</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Inversor Recomendado -->
+                    <div class="card">
+                        <h3>Inversor Recomendado</h3>
+                        <div id="inversor-info" class="info-box">
+                            <p id="inversor-recomendado">Selecione a quantidade de painéis para ver o inversor recomendado</p>
+                        </div>
+                    </div>
+
+                    <!-- Materiais Adicionais -->
+                    <div class="card full-width">
+                        <h3>Materiais Adicionais</h3>
+                        <div id="materiais-lista" class="materiais-grid">
+                            <!-- Materiais serão preenchidos via JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Percentuais de Cálculo -->
+                    <div class="card">
+                        <h3>Percentuais de Cálculo</h3>
+                        <div class="form-group">
+                            <label class="form-label">Impostos (%):</label>
+                            <input type="number" id="percentual-impostos" class="form-control" value="12" min="0" max="100" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mão de Obra (%):</label>
+                            <input type="number" id="percentual-mao-obra" class="form-control" value="25" min="0" max="100" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Deslocamento (%):</label>
+                            <input type="number" id="percentual-deslocamento" class="form-control" value="8" min="0" max="100" step="0.1">
+                        </div>
+                    </div>
+
+                    <!-- Resumo do Orçamento -->
+                    <div class="card">
+                        <h3>Resumo do Orçamento</h3>
+                        <div id="resumo-orcamento" class="orcamento-resumo">
+                            <div class="resumo-item">
+                                <span>Painéis Solares:</span>
+                                <span id="custo-paineis">R$ 0,00</span>
+                            </div>
+                            <div class="resumo-item">
+                                <span>Estrutura:</span>
+                                <span id="custo-estrutura">R$ 0,00</span>
+                            </div>
+                            <div class="resumo-item">
+                                <span>Inversor:</span>
+                                <span id="custo-inversor">R$ 0,00</span>
+                            </div>
+                            <div class="resumo-item">
+                                <span>Materiais Adicionais:</span>
+                                <span id="custo-materiais">R$ 0,00</span>
+                            </div>
+                            <div class="resumo-item subtotal">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">R$ 0,00</span>
+                            </div>
+                            <div class="resumo-item">
+                                <span>Impostos:</span>
+                                <span id="custo-impostos">R$ 0,00</span>
+                            </div>
+                            <div class="resumo-item">
+                                <span>Mão de Obra:</span>
+                                <span id="custo-mao-obra">R$ 0,00</span>
+                            </div>
+                            <div class="resumo-item">
+                                <span>Deslocamento:</span>
+                                <span id="custo-deslocamento">R$ 0,00</span>
+                            </div>
+                            <div class="resumo-item total">
+                                <span>TOTAL:</span>
+                                <span id="custo-total">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Dados do Cliente -->
+            <div id="dados-cliente" class="tab-panel">
+                <div class="grid">
+                    <div class="card">
+                        <h3>Dados do Cliente</h3>
+                        <form id="form-cliente">
+                            <div class="form-group">
+                                <label class="form-label">Nome Completo *:</label>
+                                <input type="text" id="cliente-nome" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Cidade *:</label>
+                                <input type="text" id="cliente-cidade" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">E-mail:</label>
+                                <input type="email" id="cliente-email" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Telefone:</label>
+                                <input type="tel" id="cliente-telefone" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Consumo Médio Mensal (kWh) *:</label>
+                                <input type="number" id="cliente-consumo" class="form-control" min="1" required>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Informações Importantes</h3>
+                        <div class="info-content">
+                            <ul>
+                                <li>Os campos marcados com * são obrigatórios</li>
+                                <li>O consumo médio mensal pode ser encontrado na sua conta de energia</li>
+                                <li>Considere o maior valor de consumo dos últimos 12 meses</li>
+                                <li>O sistema será dimensionado baseado no seu consumo médio</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Análise Financeira -->
+            <div id="analise-financeira" class="tab-panel">
+                <h2>Análise Financeira e Energética</h2>
+                
+                <div class="grid">
+                    <div class="card full-width">
+                        <h3>Dados Base de Cálculo</h3>
+                        <div id="dados-base" class="dados-base">
+                            <!-- Dados serão preenchidos via JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <h3>Evolução do Investimento (25 Anos)</h3>
+                        <div class="chart-container" style="position: relative; height: 400px;">
+                            <canvas id="grafico-investimento"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Resumo Financeiro</h3>
+                        <div id="resumo-financeiro" class="resumo-financeiro">
+                            <!-- Dados serão preenchidos via JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Análise Energética Mensal</h3>
+                        <div id="analise-energetica" class="analise-energetica">
+                            <!-- Dados serão preenchidos via JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Impacto Ambiental</h3>
+                        <div id="impacto-ambiental" class="impacto-ambiental">
+                            <!-- Dados serão preenchidos via JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="card full-width">
+                        <button id="gerar-analise" class="btn btn--primary btn--lg btn--full-width">
+                            📊 Gerar Análise Completa
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Finalizar Orçamento -->
+            <div id="finalizar-orcamento" class="tab-panel">
+                <h2>Finalizar Orçamento</h2>
+                
+                <div class="grid">
+                    <div class="card full-width">
+                        <h3>Resumo Final</h3>
+                        <div id="resumo-final" class="resumo-final">
+                            <!-- Dados serão preenchidos via JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Ações Finais</h3>
+                        <div class="acoes-finais">
+                            <button id="gerar-pdf" class="btn btn--primary btn--full-width mb-8">
+                                📄 Gerar PDF do Orçamento
+                            </button>
+                            <button id="enviar-email" class="btn btn--secondary btn--full-width mb-8">
+                                📧 Enviar por E-mail
+                            </button>
+                            <button id="salvar-orcamento" class="btn btn--outline btn--full-width">
+                                💾 Salvar Orçamento
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Validação do Sistema</h3>
+                        <div id="validacao-sistema" class="info-content">
+                            <div id="status-validacao">
+                                <div class="validation-item">
+                                    <span>✅ Localização selecionada</span>
+                                    <span id="status-cidade" class="status--error">❌ Não selecionado</span>
+                                </div>
+                                <div class="validation-item">
+                                    <span>✅ Sistema dimensionado</span>
+                                    <span id="status-sistema" class="status--error">❌ Incompleto</span>
+                                </div>
+                                <div class="validation-item">
+                                    <span>✅ Dados do cliente</span>
+                                    <span id="status-cliente" class="status--error">❌ Incompleto</span>
+                                </div>
+                                <div class="validation-item">
+                                    <span>✅ Pronto para PDF</span>
+                                    <span id="status-pdf" class="status--error">❌ Aguardando</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 Futture System - Energia Solar Profissional</p>
+        </footer>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="admin-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Painel Administrativo</h2>
+                <button id="close-admin" class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="admin-tabs">
+                    <button class="admin-tab active" data-admin-tab="cidades">Cidades</button>
+                    <button class="admin-tab" data-admin-tab="paineis">Painéis</button>
+                    <button class="admin-tab" data-admin-tab="estruturas">Estruturas</button>
+                    <button class="admin-tab" data-admin-tab="inversores">Inversores</button>
+                    <button class="admin-tab" data-admin-tab="materiais">Materiais</button>
+                    <button class="admin-tab" data-admin-tab="configuracoes">Configurações</button>
+                </div>
+
+                <div class="admin-content">
+                    <div id="admin-cidades" class="admin-panel active">
+                        <h3>Gerenciar Cidades</h3>
+                        <div class="admin-controls">
+                            <input type="text" id="nova-cidade" placeholder="Nome da cidade" class="form-control">
+                            <input type="number" id="nova-irradiacao" placeholder="Irradiação" step="0.1" class="form-control">
+                            <button id="add-cidade" class="btn btn--primary">Adicionar</button>
+                        </div>
+                        <div id="lista-cidades" class="admin-list"></div>
+                    </div>
+
+                    <div id="admin-paineis" class="admin-panel">
+                        <h3>Gerenciar Painéis</h3>
+                        <div class="admin-controls">
+                            <input type="text" id="novo-painel" placeholder="Potência (ex: 560W)" class="form-control">
+                            <input type="number" id="novo-preco-painel" placeholder="Preço" step="0.01" class="form-control">
+                            <button id="add-painel" class="btn btn--primary">Adicionar</button>
+                        </div>
+                        <div id="lista-paineis" class="admin-list"></div>
+                    </div>
+
+                    <div id="admin-estruturas" class="admin-panel">
+                        <h3>Gerenciar Estruturas</h3>
+                        <div class="admin-controls">
+                            <input type="text" id="nova-estrutura" placeholder="Nome da estrutura" class="form-control">
+                            <input type="number" id="novo-preco-estrutura" placeholder="Preço" step="0.01" class="form-control">
+                            <button id="add-estrutura" class="btn btn--primary">Adicionar</button>
+                        </div>
+                        <div id="lista-estruturas" class="admin-list"></div>
+                    </div>
+
+                    <div id="admin-inversores" class="admin-panel">
+                        <h3>Gerenciar Inversores</h3>
+                        <div class="admin-controls">
+                            <input type="text" id="novo-inversor" placeholder="Nome do inversor" class="form-control">
+                            <input type="number" id="novo-preco-inversor" placeholder="Preço" step="0.01" class="form-control">
+                            <input type="number" id="novo-min-paineis" placeholder="Min painéis" class="form-control">
+                            <input type="number" id="novo-max-paineis" placeholder="Max painéis" class="form-control">
+                            <button id="add-inversor" class="btn btn--primary">Adicionar</button>
+                        </div>
+                        <div id="lista-inversores" class="admin-list"></div>
+                    </div>
+
+                    <div id="admin-materiais" class="admin-panel">
+                        <h3>Gerenciar Materiais</h3>
+                        <div class="admin-controls">
+                            <input type="text" id="novo-material" placeholder="Nome do material" class="form-control">
+                            <input type="number" id="novo-preco-material" placeholder="Preço" step="0.01" class="form-control">
+                            <input type="text" id="nova-unidade" placeholder="Unidade" class="form-control">
+                            <input type="number" id="nova-quantidade-base" placeholder="Quantidade base" class="form-control">
+                            <button id="add-material" class="btn btn--primary">Adicionar</button>
+                        </div>
+                        <div id="lista-materiais" class="admin-list"></div>
+                    </div>
+
+                    <div id="admin-configuracoes" class="admin-panel">
+                        <h3>Configurações Gerais</h3>
+                        <div class="config-form">
+                            <div class="form-group">
+                                <label class="form-label">Tarifa de Energia (R$/kWh):</label>
+                                <input type="number" id="tarifa-energia" class="form-control" step="0.001">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Eficiência do Sistema:</label>
+                                <input type="number" id="eficiencia-sistema" class="form-control" step="0.01" min="0" max="1">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Reajuste Anual da Tarifa (%):</label>
+                                <input type="number" id="reajuste-anual" class="form-control" step="0.01">
+                            </div>
+                            <div class="admin-actions">
+                                <button id="save-config" class="btn btn--primary">Salvar Configurações</button>
+                                <button id="export-data" class="btn btn--secondary">Exportar Dados</button>
+                                <button id="import-data" class="btn btn--secondary">Importar Dados</button>
+                                <button id="reset-data" class="btn btn--outline">Resetar para Padrão</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File input for import (hidden) -->
+    <input type="file" id="file-import" accept=".json" style="display: none;">
+
+    <!-- Notification -->
+    <div id="notification" class="notification hidden">
+        <span id="notification-text"></span>
+        <button id="notification-close" class="notification-close">×</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

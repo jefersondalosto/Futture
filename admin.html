@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Futture System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div>
+                    <h1>🔧 Painel Administrativo</h1>
+                    <p class="subtitle">Gerenciar Produtos e Configurações</p>
+                </div>
+                <button id="back-btn" class="btn btn--secondary">← Voltar</button>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab active" data-tab="cidades">Cidades</button>
+            <button class="tab" data-tab="paineis">Painéis</button>
+            <button class="tab" data-tab="estruturas">Estruturas</button>
+            <button class="tab" data-tab="inversores">Inversores</button>
+            <button class="tab" data-tab="materiais">Materiais</button>
+            <button class="tab" data-tab="configuracoes">Configurações</button>
+        </nav>
+
+        <main class="tab-content">
+            <!-- Tab Cidades -->
+            <div id="cidades" class="tab-panel active">
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>Gerenciar Cidades</h2>
+                        <button id="add-cidade" class="btn btn--primary">+ Adicionar Cidade</button>
+                    </div>
+                    <div id="cidades-list" class="admin-list"></div>
+                </div>
+            </div>
+
+            <!-- Tab Painéis -->
+            <div id="paineis" class="tab-panel">
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>Gerenciar Painéis Solares</h2>
+                        <button id="add-painel" class="btn btn--primary">+ Adicionar Painel</button>
+                    </div>
+                    <div id="paineis-list" class="admin-list"></div>
+                </div>
+            </div>
+
+            <!-- Tab Estruturas -->
+            <div id="estruturas" class="tab-panel">
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>Gerenciar Estruturas</h2>
+                        <button id="add-estrutura" class="btn btn--primary">+ Adicionar Estrutura</button>
+                    </div>
+                    <div id="estruturas-list" class="admin-list"></div>
+                </div>
+            </div>
+
+            <!-- Tab Inversores -->
+            <div id="inversores" class="tab-panel">
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>Gerenciar Inversores</h2>
+                        <button id="add-inversor" class="btn btn--primary">+ Adicionar Inversor</button>
+                    </div>
+                    <div id="inversores-list" class="admin-list"></div>
+                </div>
+            </div>
+
+            <!-- Tab Materiais -->
+            <div id="materiais" class="tab-panel">
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>Gerenciar Materiais Adicionais</h2>
+                        <button id="add-material" class="btn btn--primary">+ Adicionar Material</button>
+                    </div>
+                    <div id="materiais-list" class="admin-list"></div>
+                </div>
+            </div>
+
+            <!-- Tab Configurações -->
+            <div id="configuracoes" class="tab-panel">
+                <div class="admin-section">
+                    <h2>Configurações Gerais</h2>
+                    <div class="config-form">
+                        <div class="form-group">
+                            <label>Tarifa de Energia (R$/kWh)</label>
+                            <input type="number" id="tarifa-energia" step="0.01" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Eficiência do Sistema (%)</label>
+                            <input type="number" id="eficiencia-sistema" step="0.01" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Reajuste Anual da Tarifa (%)</label>
+                            <input type="number" id="reajuste-anual" step="0.01" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Vida Útil do Sistema (anos)</label>
+                            <input type="number" id="vida-util" class="form-control">
+                        </div>
+                        <button id="save-config" class="btn btn--primary">Salvar Configurações</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="admin-actions">
+            <button id="export-data" class="btn btn--secondary">📥 Exportar Dados</button>
+            <button id="import-data" class="btn btn--secondary">📤 Importar Dados</button>
+            <button id="reset-data" class="btn btn--danger">🔄 Resetar para Padrão</button>
+            <input type="file" id="import-file" accept=".json" style="display: none;">
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
